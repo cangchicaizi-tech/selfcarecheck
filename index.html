@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>日々のログ</title>
+<style>
+:root{--bg:#fafaf8;--card:#fff;--text:#222;--mute:#777;--line:#dcdcd6;--acc:#2f6f9f;--worse:#e07a3f;--better:#3a9d8f;--same:#c9ccd1;--unknown:#9b8bd0}
+@media (prefers-color-scheme:dark){:root{--bg:#17181a;--card:#222426;--text:#e8e8e6;--mute:#9a9a96;--line:#3a3c3f;--acc:#7ab8e6;--same:#55595e}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 -apple-system,"Hiragino Sans","Noto Sans JP",sans-serif}
+main{max-width:560px;margin:0 auto;padding:12px 16px 80px}
+h1{font-size:17px;margin:8px 0}
+h2{font-size:14px;margin:18px 0 6px;color:var(--mute);font-weight:600}
+nav{display:flex;gap:6px;margin:8px 0 12px}
+nav button{flex:1;padding:8px;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:8px;font:inherit}
+nav button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px}
+.q{font-weight:600;margin-bottom:6px}
+.opts{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.opts button,.chips button,.sc button,.sb button,.seg button,.btn{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:8px;font:inherit;font-size:12px;padding:8px 2px;min-height:40px}
+.opts button.on.same{background:var(--same);border-color:var(--same)}
+.opts button.on.better{background:var(--better);color:#fff;border-color:var(--better)}
+.opts button.on.worse{background:var(--worse);color:#fff;border-color:var(--worse)}
+.opts button.on.unknown{background:var(--unknown);color:#fff;border-color:var(--unknown)}
+.opts button.on.na{background:var(--text);color:var(--bg);border-color:var(--text)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{padding:6px 10px;font-size:13px}
+.sb{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.chips button.on,.sc button.on,.sb button.on,.seg button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.sc{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+input[type=date],input[type=number],textarea{font:inherit;border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--card);color:var(--text)}
+textarea{width:100%;min-height:60px}
+input[type=number]{width:90px}
+.hint{color:var(--mute);font-size:12px}
+.status{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:8px 16px;font-size:12px;color:var(--mute);text-align:center}
+.status.err{color:#c0392b}
+.seg{display:flex;gap:6px;margin:6px 0}
+.seg button{padding:6px 14px}
+.btn{padding:10px 14px;font-size:14px}
+.btn.pri{background:var(--acc);color:#fff;border-color:var(--acc)}
+.hm{display:grid;gap:2px;align-items:center}
+.hm .lb{font-size:11px;color:var(--mute);white-space:nowrap}
+.cell{height:18px;border-radius:3px;font-size:10px;color:#fff;text-align:center;line-height:18px;cursor:pointer}
+.hm.d7 .cell{height:26px;line-height:26px;font-size:12px}
+.s-worse{background:var(--worse)}.s-better{background:var(--better)}.s-same{background:var(--same);color:var(--text)}.s-unknown{background:var(--unknown)}
+.s-na{border:1px dashed var(--mute);color:var(--mute)}.s-none{border:1px solid var(--line)}
+.legend{display:flex;flex-wrap:wrap;gap:8px;font-size:11px;color:var(--mute);margin-top:6px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;vertical-align:-1px;margin-right:3px}
+.list .it{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--line);cursor:pointer;font-size:13px}
+.list .it:last-child{border-bottom:0}
+svg text{fill:var(--mute);font-size:9px}
+.note{font-size:12px;color:var(--mute);line-height:1.6}
+.sig{border-left:6px solid var(--same)}
+.sig.ok{border-left-color:var(--better)}.sig.warn{border-left-color:#d9a21b}.sig.alert{border-left-color:#cf3f3f}
+.sig .t{font-weight:700;font-size:16px;margin-bottom:2px}
+details{margin-top:8px;font-size:12px;color:var(--mute)}
+details summary{cursor:pointer}
+</style>
+</head>
+<body>
+<main>
+<h1>日々のログ</h1>
+<nav id="nav">
+  <button data-tab="input" class="on">入力</button>
+  <button data-tab="hist">履歴</button>
+  <button data-tab="data">データ</button>
+</nav>
+
+<section id="t-input">
+  <div class="row" style="margin-bottom:8px">
+    <input type="date" id="date">
+    <button class="btn" id="today">今日</button>
+  </div>
+  <div class="hint" style="margin-bottom:8px">「悪い」=普段より悪い・難しい。どれも押さなくてOK(未回答として残ります)。押し直すと解除できます。</div>
+  <div id="sigI" class="card sig" hidden></div>
+  <div id="form"></div>
+</section>
+
+<section id="t-hist" hidden>
+  <div id="sigH" class="card sig"></div>
+  <div class="seg" id="rng"><button data-r="7" class="on">7日</button><button data-r="30">30日</button></div>
+  <div id="sum" class="card"></div>
+  <h2>項目ごとの記録</h2>
+  <div class="card"><div id="hm" class="hm"></div><div class="legend" id="legend"></div></div>
+  <h2>「悪い」だった項目数の推移</h2>
+  <div class="card"><div id="chart"></div></div>
+  <h2>記録のある日</h2>
+  <div class="card list" id="list"></div>
+  <div class="note">「悪い」の数は目安の一つで、診断や基準値ではありません。「わからない」「該当なし」「未回答」は良い・悪いのどちらにも数えていません。</div>
+</section>
+
+<section id="t-data" hidden>
+  <div class="card">
+    <div class="q">書き出し(バックアップ)</div>
+    <div class="row">
+      <button class="btn pri" id="exJson">JSONで書き出し</button>
+      <button class="btn" id="exCsv">CSVで書き出し</button>
+    </div>
+    <div class="hint" style="margin-top:6px">週に1回の書き出しがおすすめです。書き出したファイルは公開リポジトリに置かないでください。</div>
+  </div>
+  <div class="card">
+    <div class="q">取り込み(JSON)</div>
+    <input type="file" id="imp" accept="application/json,.json">
+    <div class="hint" style="margin-top:6px">同じ日付は、更新日時が新しい方を残して統合します。</div>
+    <div id="impMsg" class="hint"></div>
+  </div>
+  <div class="card">
+    <div class="q">サインのしきい値</div>
+    <div class="row">注意 <input type="number" id="thW" min="1" max="11"> 点以上 ／ 要注意 <input type="number" id="thA" min="2" max="12"> 点以上</div>
+    <div class="hint" style="margin-top:6px">直近3日の平均点で判定します(初期値は 3 と 5)。要注意は注意より大きい値にしてください。</div>
+    <div id="thMsg" class="hint"></div>
+  </div>
+  <div class="card">
+    <div class="q">保存状況</div>
+    <div id="info" class="hint"></div>
+    <div class="hint">データはこのブラウザ内だけに保存され、外部へは送信されません。</div>
+  </div>
+</section>
+</main>
+<div class="status" id="status">&nbsp;</div>
+
+<script>
+(function(){
+'use strict';
+var KEY='dlog_v1_data';
+var ITEMS=[
+ {k:'sleep',q:'睡眠',s:'昨夜の眠り'},
+ {k:'fatigue',q:'身体の疲れ',s:'だるさ・重さ'},
+ {k:'mood',q:'気分',s:'落ち込み・緊張・イライラ'},
+ {k:'focus',q:'集中力',s:'続けられるか'},
+ {k:'decision',q:'判断のしやすさ',s:'決めるのに時間がかかるか'},
+ {k:'appetite',q:'食欲・食事',s:'食べたい・食べられたか'}
+];
+var STATES=[['same','いつも通り'],['better','良い'],['worse','悪い'],['unknown','わからない'],['na','該当なし']];
+var TASKS=[['housework','家事'],['grooming','身支度'],['reply','返信・連絡'],['outing','外出'],['bath','入浴'],['meal','食事の用意'],['decide','物事を決める'],['work','仕事・作業']];
+var SLEEP=[['lt4','4未満'],['4','4〜5'],['5','5〜6'],['6','6〜7'],['7','7〜8'],['8','8〜9'],['gt9','9以上']];
+function normSettings(s){
+  var w=3,a=5;
+  if(s&&Number.isInteger(s.warn)&&Number.isInteger(s.alert)&&s.warn>=1&&s.alert>s.warn&&s.alert<=12){w=s.warn;a=s.alert}
+  return {warn:w,alert:a};
+}
+function bandOf(h){return h<4?'lt4':h<5?'4':h<6?'5':h<7?'6':h<8?'7':h<9?'8':'gt9'}
+function validBand(b){return SLEEP.some(function(s){return s[0]===b})}
+var MARK={worse:'悪',better:'良',same:'＝',unknown:'？',na:'－'};
+
+function pad(n){return n<10?'0'+n:''+n}
+function ymd(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
+function addDays(s,n){var p=s.split('-').map(Number);return ymd(new Date(p[0],p[1]-1,p[2]+n))}
+function today(){return ymd(new Date())}
+function $(id){return document.getElementById(id)}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+
+var db=load();
+var cur=today();
+var rng=7;
+
+function load(){
+  var raw=null;
+  try{raw=localStorage.getItem(KEY);
+    if(raw){var d=JSON.parse(raw);if(d&&Array.isArray(d.entries)){if(!Array.isArray(d.events))d.events=[];
+      d.settings=normSettings(d.settings);
+      d.entries.forEach(function(e){
+        if(!validBand(e.sleepBand))e.sleepBand=(typeof e.sleepHours==='number')?bandOf(e.sleepHours):null;
+        delete e.sleepHours;
+      });
+      return d}}
+  }catch(e){
+    try{localStorage.setItem(KEY+'_corrupt_'+Date.now(),raw)}catch(e2){}
+  }
+  return {schemaVersion:1,entries:[],events:[],settings:normSettings(null)};
+}
+function save(){
+  try{localStorage.setItem(KEY,JSON.stringify(db));setStatus('保存しました '+new Date().toLocaleTimeString('ja-JP'));return true}
+  catch(e){setStatus('保存できません。ブラウザの設定を確認してください',true);return false}
+}
+function setStatus(t,err){var s=$('status');s.textContent=t;s.className='status'+(err?' err':'')}
+
+function getEntry(date){for(var i=0;i<db.entries.length;i++)if(db.entries[i].date===date)return db.entries[i];return null}
+function blank(date){
+  var a={};ITEMS.forEach(function(i){a[i.k]=null});
+  return {date:date,answers:a,sleepBand:null,stress:null,difficultTasks:null,note:'',updatedAt:''};
+}
+function touch(fn){
+  var e=getEntry(cur);
+  if(!e){e=blank(cur);db.entries.push(e)}
+  fn(e);
+  e.updatedAt=new Date().toISOString();
+  db.entries.sort(function(a,b){return a.date<b.date?-1:1});
+  save();
+}
+function stats(e){
+  var w=0,b=0,v=0;
+  ITEMS.forEach(function(i){var a=e.answers[i.k];
+    if(a==='worse')w++;if(a==='better')b++;
+    if(a==='same'||a==='better'||a==='worse')v++;});
+  return {w:w,b:b,v:v};
+}
+
+/* ---------- ストレス蓄積サイン ---------- */
+function isLowSleep(b){return b==='lt4'||b==='4'||b==='5'}
+function avg(a){return a.reduce(function(x,y){return x+y},0)/a.length}
+// 1日の点数(目安・満点12)。回答が3項目未満の日は点数にしない
+function dayPoints(e){
+  if(!e)return null;
+  var s=stats(e);
+  if(s.v<3)return null;
+  var p=s.w;
+  var t=Array.isArray(e.difficultTasks)?e.difficultTasks.length:0;
+  if(t>=3)p+=2;else if(t>=1)p+=1;
+  if(e.stress===4)p+=2;else if(e.stress===3)p+=1;
+  if(e.sleepBand==='lt4')p+=2;else if(e.sleepBand==='4'||e.sleepBand==='5')p+=1;
+  return p;
+}
+function signal(){
+  var t=today(),st=db.settings,p3=[],cnt={},low=0,hard=0,hi=0,i,e,p;
+  for(i=0;i<3;i++){
+    e=getEntry(addDays(t,-i));p=dayPoints(e);
+    if(p==null)continue;
+    p3.push(p);
+    ITEMS.forEach(function(it){if(e.answers[it.k]==='worse')cnt[it.q]=(cnt[it.q]||0)+1});
+    if(isLowSleep(e.sleepBand))low++;
+    if(Array.isArray(e.difficultTasks)&&e.difficultTasks.length)hard++;
+    if(e.stress>=3)hi++;
+  }
+  if(p3.length<2)return {level:'hold'};
+  var a3=avg(p3),level='ok',why=[],hiDays=0;
+  for(i=0;i<7;i++){p=dayPoints(getEntry(addDays(t,-i)));if(p!=null&&p>=st.alert)hiDays++}
+  if(a3>=st.alert||hiDays>=3)level='alert';
+  else if(a3>=st.warn)level='warn';
+  var base=[];
+  for(i=3;i<=32;i++){p=dayPoints(getEntry(addDays(t,-i)));if(p!=null)base.push(p)}
+  var b=base.length>=14?avg(base):null;
+  if(b!=null&&a3>=b+2&&level==='ok'){level='warn';why.push('自分の普段(過去30日の平均 '+b.toFixed(1)+' 点)より高めです')}
+  if(hiDays>=3)why.push('直近7日に '+st.alert+' 点以上の日が '+hiDays+' 日あります');
+  var names=Object.keys(cnt).sort(function(x,y){return cnt[y]-cnt[x]});
+  if(names.length)why.push('「悪い」が多い項目: '+names.slice(0,3).map(function(n){return n+'('+cnt[n]+'日)'}).join('、'));
+  if(low)why.push('睡眠6時間未満: '+low+'日');
+  if(hard)why.push('難しい生活動作あり: '+hard+'日');
+  if(hi)why.push('ストレス感3以上: '+hi+'日');
+  return {level:level,a3:a3,n:p3.length,b:b,why:why};
+}
+var LV={
+  ok:['目立ったサインはありません','ok'],
+  warn:['注意:負荷が溜まってきているサインがあります','warn'],
+  alert:['要注意:負荷が高い状態が続いています','alert'],
+  hold:['判定保留','hold']
+};
+var CALC='<details><summary>点数と判定の計算方法・限界</summary>'+
+ '<div>【1日の点数(満点12)】「悪い」1項目につき+1(6項目)/難しい生活動作が1〜2個で+1、3個以上で+2/ストレス感が3で+1、4で+2/睡眠が6時間未満で+1、4時間未満で+2。'+
+ '「わからない」「該当なし」「未回答」は加点も減点もしません。回答が3項目未満の日は点数にしません。睡眠は「感覚」と「時間」の両方を見るため、2回数えられます。</div>'+
+ '<div>【判定】直近3日(点数のある日)の平均が、注意のしきい値以上で「注意」、要注意のしきい値以上、または直近7日に要注意のしきい値以上の日が3日以上で「要注意」。'+
+ '14日分以上たまると、自分の過去30日の平均より2点以上高い場合も「注意」にします。</div>'+
+ '<div>【限界】診断ではありません。点数の配分としきい値は根拠のある基準ではなく、使いながら調整する仮の値です。見逃しも空振りもあります。アプリを開いたときだけ表示されます。</div></details>';
+function renderSig(){
+  var s=signal(),l=LV[s.level],st=db.settings,body='',full='';
+  if(s.level==='hold'){
+    body='<div>直近3日のうち2日以上、3項目以上に答えた日があると判定します。</div>';
+  }else{
+    body='<div>直近3日の平均: <b>'+s.a3.toFixed(1)+'</b> 点(満点12 / 注意 '+st.warn+' 点〜、要注意 '+st.alert+' 点〜)</div>';
+    if(s.why.length)full+='<div class="hint">'+s.why.map(esc).join(' ／ ')+'</div>';
+    if(s.level==='warn')full+='<div>予定を減らす、休む時間を確保するなど、負荷を下げることを考える目安にしてください。</div>';
+    if(s.level==='alert')full+='<div>一人で抱えず、支援員や主治医など身近な人に状況を共有する目安にしてください。</div>';
+  }
+  var cls='card sig '+l[1];
+  var i=$('sigI'),h=$('sigH');
+  i.hidden=false;i.className=cls;
+  i.innerHTML='<div class="t">'+l[0]+'</div>'+body+(s.level==='warn'||s.level==='alert'?full:'');
+  h.className=cls;
+  h.innerHTML='<div class="t">いまのサイン: '+l[0]+'</div>'+body+full+CALC;
+}
+
+/* ---------- 入力 ---------- */
+function renderForm(){
+  var e=getEntry(cur)||blank(cur);
+  var h='';
+  ITEMS.forEach(function(it){
+    h+='<div class="card"><div class="q">'+it.q+' <span class="hint">'+it.s+'</span></div><div class="opts">';
+    STATES.forEach(function(s){
+      h+='<button data-a="ans" data-k="'+it.k+'" data-v="'+s[0]+'" class="'+s[0]+(e.answers[it.k]===s[0]?' on':'')+'">'+s[1]+'</button>';
+    });
+    h+='</div></div>';
+  });
+  h+='<div class="card"><div class="q">難しかった生活動作 <span class="hint">普段できることで</span></div><div class="chips">';
+  var t=e.difficultTasks;
+  h+='<button data-a="tasknone" class="'+(Array.isArray(t)&&t.length===0?'on':'')+'">特になし</button>';
+  TASKS.forEach(function(x){
+    h+='<button data-a="task" data-v="'+x[0]+'" class="'+(Array.isArray(t)&&t.indexOf(x[0])>=0?'on':'')+'">'+x[1]+'</button>';
+  });
+  h+='</div></div>';
+  h+='<div class="card"><div class="q">全体のストレス感 <span class="hint">0=ほぼなし 〜 4=非常に強い</span></div><div class="sc">';
+  for(var i=0;i<=4;i++)h+='<button data-a="stress" data-v="'+i+'" class="'+(e.stress===i?'on':'')+'">'+i+'</button>';
+  h+='</div></div>';
+  h+='<div class="card"><div class="q">睡眠時間 <span class="hint">時間・5ちょうどは「5〜6」</span></div><div class="sb">';
+  SLEEP.forEach(function(s){
+    h+='<button data-a="sleepband" data-v="'+s[0]+'" class="'+(e.sleepBand===s[0]?'on':'')+'">'+s[1]+'</button>';
+  });
+  h+='</div></div>';
+  h+='<div class="card"><div class="q">一言メモ</div><textarea id="memo" maxlength="500">'+esc(e.note||'')+'</textarea></div>';
+  $('form').innerHTML=h;
+  renderSig();
+}
+$('form').addEventListener('click',function(ev){
+  var b=ev.target.closest('button');if(!b)return;
+  var a=b.getAttribute('data-a'),k=b.getAttribute('data-k'),v=b.getAttribute('data-v');
+  if(a==='ans')touch(function(e){e.answers[k]=(e.answers[k]===v)?null:v});
+  else if(a==='stress')touch(function(e){var n=Number(v);e.stress=(e.stress===n)?null:n});
+  else if(a==='sleepband')touch(function(e){e.sleepBand=(e.sleepBand===v)?null:v});
+  else if(a==='tasknone')touch(function(e){e.difficultTasks=(Array.isArray(e.difficultTasks)&&e.difficultTasks.length===0)?null:[]});
+  else if(a==='task')touch(function(e){
+    var t=Array.isArray(e.difficultTasks)?e.difficultTasks.slice():[];
+    var i=t.indexOf(v);if(i>=0)t.splice(i,1);else t.push(v);
+    e.difficultTasks=t.length?t:null;});
+  else return;
+  renderForm();
+});
+$('form').addEventListener('input',function(ev){
+  if(ev.target.id==='memo'){
+    var m=ev.target.value;touch(function(e){e.note=m});
+  }
+});
+$('date').value=cur;$('date').max=today();
+$('date').addEventListener('change',function(){if(this.value){cur=this.value;renderForm()}});
+$('today').addEventListener('click',function(){cur=today();$('date').value=cur;renderForm()});
+
+/* ---------- タブ ---------- */
+function showTab(t){
+  ['input','hist','data'].forEach(function(n){$('t-'+n).hidden=(n!==t)});
+  Array.prototype.forEach.call($('nav').children,function(b){b.className=(b.getAttribute('data-tab')===t)?'on':''});
+  if(t==='input')renderForm();
+  if(t==='hist')renderHist();
+  if(t==='data')renderInfo();
+}
+$('nav').addEventListener('click',function(ev){var b=ev.target.closest('button');if(b)showTab(b.getAttribute('data-tab'))});
+
+/* ---------- 履歴 ---------- */
+$('rng').addEventListener('click',function(ev){
+  var b=ev.target.closest('button');if(!b)return;
+  rng=Number(b.getAttribute('data-r'));
+  Array.prototype.forEach.call($('rng').children,function(x){x.className=(x===b)?'on':''});
+  renderHist();
+});
+function days(n){var a=[],t=today();for(var i=n-1;i>=0;i--)a.push(addDays(t,-i));return a}
+function taskState(e){
+  if(!e)return 'none';
+  var t=e.difficultTasks;
+  if(t==null)return 'none';
+  return t.length===0?'same':'worse';
+}
+function renderHist(){
+  renderSig();
+  var ds=days(rng);
+  var es=ds.map(getEntry);
+  // 概要
+  var rec=0,any=0,three=0,shN=0,shLow=0,sumW=0,wDays=0;
+  es.forEach(function(e){
+    if(!e)return;rec++;
+    var s=stats(e);
+    if(s.v>0){wDays++;sumW+=s.w}
+    if(s.w>=1)any++;if(s.w>=3)three++;
+    if(e.sleepBand){shN++;if(e.sleepBand==='lt4'||e.sleepBand==='4'||e.sleepBand==='5')shLow++}
+  });
+  $('sum').innerHTML='<div class="q">直近'+rng+'日のまとめ</div>'+
+    '<div>記録した日: <b>'+rec+'</b> / '+rng+'日</div>'+
+    '<div>「悪い」が1項目以上あった日: <b>'+any+'</b>日(3項目以上: <b>'+three+'</b>日)</div>'+
+    '<div>睡眠が6時間未満だった日: <b>'+shLow+'</b>日'+(shN?'(睡眠時間を選んだ'+shN+'日のうち)':'(睡眠時間の記録なし)')+'</div>'+
+    '<div class="hint">回答のある日の「悪い」平均: '+(wDays?(sumW/wDays).toFixed(1):'―')+' 項目 / 6項目中</div>';
+  // ヒートマップ
+  var hm=$('hm');hm.className='hm'+(rng===7?' d7':'');
+  hm.style.gridTemplateColumns='5.6em repeat('+rng+',minmax(0,1fr))';
+  var h='<div></div>';
+  ds.forEach(function(d,i){
+    var p=d.split('-');
+    h+='<div class="lb" style="text-align:'+(i===rng-1?'right':'center')+';min-width:0;overflow:visible">'+((rng===7||i%5===0||i===rng-1)?(Number(p[1])+'/'+Number(p[2])):'')+'</div>';
+  });
+  function row(label,fn){
+    h+='<div class="lb">'+label+'</div>';
+    ds.forEach(function(d,i){
+      var e=es[i],s=fn(e);
+      h+='<div class="cell s-'+s+'" data-d="'+d+'" title="'+d+'">'+(rng===7&&MARK[s]?MARK[s]:'')+'</div>';
+    });
+  }
+  ITEMS.forEach(function(it){row(it.q,function(e){return e&&e.answers[it.k]?e.answers[it.k]:'none'})});
+  row('生活動作',taskState);
+  hm.innerHTML=h;
+  $('legend').innerHTML=
+    '<span><i class="s-worse"></i>悪い</span><span><i class="s-better"></i>良い</span><span><i class="s-same"></i>いつも通り</span>'+
+    '<span><i class="s-unknown"></i>わからない</span><span><i style="border:1px dashed var(--mute)"></i>該当なし</span><span><i style="border:1px solid var(--line)"></i>未回答/未記録</span>'+
+    '<span>(生活動作: 灰=特になし、橙=難しい動作あり)</span>';
+  // グラフ
+  $('chart').innerHTML=chart(ds,es);
+  // 一覧
+  var l='';
+  var recent=db.entries.slice().sort(function(a,b){return a.date<b.date?1:-1}).slice(0,30);
+  if(!recent.length)l='<div class="hint">まだ記録がありません。</div>';
+  recent.forEach(function(e){
+    var s=stats(e);
+    var tk=Array.isArray(e.difficultTasks)?e.difficultTasks.length:null;
+    l+='<div class="it" data-d="'+e.date+'"><span>'+e.date+'</span><span>悪い '+s.w+' / 良い '+s.b+' / 回答 '+s.v+'/6'+(tk?' / 動作 '+tk:'')+'</span></div>';
+  });
+  $('list').innerHTML=l;
+}
+function chart(ds,es){
+  var W=360,H=130,L=22,R=14,T=8,B=20,iw=W-L-R,ih=H-T-B,n=ds.length;
+  function x(i){return L+(n===1?iw/2:iw*i/(n-1))}
+  function y(v){return T+ih-ih*v/6}
+  var s='<svg viewBox="0 0 '+W+' '+H+'" width="100%" role="img" aria-label="悪い項目数の推移">';
+  for(var g=0;g<=6;g+=2){
+    s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(g)+'" y2="'+y(g)+'" stroke="var(--line)" stroke-width="0.5"/>';
+    s+='<text x="'+(L-4)+'" y="'+(y(g)+3)+'" text-anchor="end">'+g+'</text>';
+  }
+  var seg=[],pts=[];
+  ds.forEach(function(d,i){
+    var e=es[i],st=e?stats(e):null;
+    if(st&&st.v>0)pts.push([x(i),y(st.w)]);
+    else{if(pts.length)seg.push(pts);pts=[]}
+  });
+  if(pts.length)seg.push(pts);
+  seg.forEach(function(p){
+    if(p.length>1)s+='<polyline fill="none" stroke="var(--worse)" stroke-width="1.5" points="'+p.map(function(q){return q[0].toFixed(1)+','+q[1].toFixed(1)}).join(' ')+'"/>';
+    p.forEach(function(q){s+='<circle cx="'+q[0].toFixed(1)+'" cy="'+q[1].toFixed(1)+'" r="2.6" fill="var(--worse)"/>'});
+  });
+  ds.forEach(function(d,i){
+    if(n<=7||i%5===0||i===n-1){var p=d.split('-');s+='<text x="'+x(i)+'" y="'+(H-6)+'" text-anchor="middle">'+Number(p[1])+'/'+Number(p[2])+'</text>'}
+  });
+  return s+'</svg><div class="hint">縦軸: 悪いと答えた項目数(6項目中)。回答のない日は線を切っています。</div>';
+}
+function jump(ev){
+  var c=ev.target.closest('[data-d]');if(!c)return;
+  cur=c.getAttribute('data-d');$('date').value=cur;showTab('input');
+}
+$('hm').addEventListener('click',jump);
+$('list').addEventListener('click',jump);
+
+/* ---------- データ ---------- */
+function renderInfo(){
+  $('thW').value=db.settings.warn;$('thA').value=db.settings.alert;
+  var n=db.entries.length;
+  $('info').textContent='記録件数: '+n+'日分'+(n?'(最古 '+db.entries[0].date+' 〜 最新 '+db.entries[n-1].date+')':'');
+}
+function download(name,type,text){
+  var blob=new Blob([text],{type:type});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download=name;
+  document.body.appendChild(a);a.click();
+  setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500);
+}
+$('exJson').addEventListener('click',function(){
+  var o={schemaVersion:1,exportedAt:new Date().toISOString(),entries:db.entries,events:db.events,settings:db.settings};
+  download('dlog-'+today()+'.json','application/json',JSON.stringify(o,null,2));
+  setStatus('JSONを書き出しました');
+});
+function csvCell(v){
+  if(v==null||v==='')return '';
+  v=String(v);
+  if(/^[=+\-@]/.test(v))v="'"+v;
+  return '"'+v.replace(/"/g,'""')+'"';
+}
+$('exCsv').addEventListener('click',function(){
+  var head=['date'].concat(ITEMS.map(function(i){return i.k}),['difficultTasks','stress','sleepBand','note']);
+  var lines=[head.join(',')];
+  db.entries.forEach(function(e){
+    var row=[e.date].concat(ITEMS.map(function(i){return e.answers[i.k]}));
+    row.push(e.difficultTasks==null?'':(e.difficultTasks.length?e.difficultTasks.join('|'):'none'));
+    row.push(e.stress,e.sleepBand,e.note);
+    lines.push(row.map(csvCell).join(','));
+  });
+  download('dlog-'+today()+'.csv','text/csv;charset=utf-8','\ufeff'+lines.join('\r\n'));
+  setStatus('CSVを書き出しました');
+});
+$('imp').addEventListener('change',function(){
+  var f=this.files&&this.files[0];if(!f)return;
+  var input=this;
+  var r=new FileReader();
+  r.onload=function(){
+    try{
+      var d=JSON.parse(r.result);
+      if(!d||!Array.isArray(d.entries))throw new Error('形式が違います');
+      var add=0,upd=0,skip=0;
+      d.entries.forEach(function(ne){
+        if(!ne||!/^\d{4}-\d{2}-\d{2}$/.test(ne.date)||typeof ne.answers!=='object'){skip++;return}
+        var base=blank(ne.date);
+        ITEMS.forEach(function(i){
+          var v=ne.answers[i.k];
+          base.answers[i.k]=(['same','better','worse','unknown','na'].indexOf(v)>=0)?v:null;
+        });
+        base.sleepBand=validBand(ne.sleepBand)?ne.sleepBand:((typeof ne.sleepHours==='number')?bandOf(ne.sleepHours):null);
+        base.stress=(typeof ne.stress==='number')?ne.stress:null;
+        base.difficultTasks=Array.isArray(ne.difficultTasks)?ne.difficultTasks.map(String):null;
+        base.note=typeof ne.note==='string'?ne.note:'';
+        base.updatedAt=typeof ne.updatedAt==='string'?ne.updatedAt:'';
+        var ex=getEntry(ne.date);
+        if(!ex){db.entries.push(base);add++}
+        else if((base.updatedAt||'')>(ex.updatedAt||'')){db.entries[db.entries.indexOf(ex)]=base;upd++}
+        else skip++;
+      });
+      if(Array.isArray(d.events)){
+        d.events.forEach(function(ev){
+          if(ev&&ev.id&&!db.events.some(function(x){return x.id===ev.id}))db.events.push(ev);
+        });
+      }
+      db.entries.sort(function(a,b){return a.date<b.date?-1:1});
+      if(d.settings)db.settings=normSettings(d.settings);
+      save();renderInfo();renderSig();
+      $('impMsg').textContent='取り込み完了: 追加 '+add+'日、更新 '+upd+'日、スキップ '+skip+'日';
+    }catch(e){$('impMsg').textContent='取り込めませんでした: '+e.message}
+    input.value='';
+  };
+  r.readAsText(f);
+});
+
+function onTh(){
+  var w=parseInt($('thW').value,10),a=parseInt($('thA').value,10);
+  if(!(w>=1&&a>w&&a<=12)){$('thMsg').textContent='注意は1以上、要注意はそれより大きく12以下にしてください。';return}
+  db.settings={warn:w,alert:a};save();renderSig();
+  $('thMsg').textContent='しきい値を保存しました。';
+}
+$('thW').addEventListener('change',onTh);
+$('thA').addEventListener('change',onTh);
+
+/* 初期表示 */
+$('legend').innerHTML='';
+renderForm();
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
+window.__dlog={get db(){return db},ITEMS:ITEMS};
+})();
+</script>
+</body>
+</html>
