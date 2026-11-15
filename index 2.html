@@ -1,0 +1,1022 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>ヒビログ</title>
+<meta name="apple-mobile-web-app-title" content="ヒビログ">
+<meta name="theme-color" content="#2f6f9f">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%232f6f9f'/%3E%3Cg fill='%23fff'%3E%3Crect x='113' y='113' width='78' height='78' rx='20'/%3E%3Crect x='217' y='113' width='78' height='78' rx='20'/%3E%3Crect x='321' y='113' width='78' height='78' rx='20' opacity='.28'/%3E%3Crect x='113' y='217' width='78' height='78' rx='20'/%3E%3Crect x='217' y='217' width='78' height='78' rx='20'/%3E%3Crect x='321' y='217' width='78' height='78' rx='20'/%3E%3Crect x='113' y='321' width='78' height='78' rx='20' opacity='.28'/%3E%3Crect x='217' y='321' width='78' height='78' rx='20' opacity='.28'/%3E%3Crect x='321' y='321' width='78' height='78' rx='20' fill='%23f2b84b'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+:root{--bg:#fafaf8;--card:#fff;--text:#222;--mute:#777;--line:#dcdcd6;--acc:#2f6f9f;--worse:#e07a3f;--better:#3a9d8f;--same:#c9ccd1;--hold:#7d838b;--vworse:#b5391f;--r1:#dcebf6;--r2:#bad6ec;--r3:#8fbbdf;--r1t:#1a2a36;--r2t:#1a2a36;--r3t:#10202c;--vio:#6f6699;--vio-bg:#eeecf4;--vio-t:#453f68;--vio-l:#7a719f;--vio-line:#d9d5e8;--viox:#fff}
+@media (prefers-color-scheme:dark){:root{--bg:#17181a;--card:#222426;--text:#e8e8e6;--mute:#9a9a96;--line:#3a3c3f;--acc:#7ab8e6;--same:#55595e;--hold:#8a9099;--vworse:#d9573a;--r1:#2d4b63;--r2:#3f7099;--r3:#7ab8e6;--r1t:#e8e8e6;--r2t:#f2f2f0;--r3t:#10202c;--vio:#9a91c8;--vio-bg:#2b2a3a;--vio-t:#d6d1ee;--vio-l:#a79fd0;--vio-line:#44425c;--viox:#17151f}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 -apple-system,"Hiragino Sans","Noto Sans JP",sans-serif}
+main{max-width:560px;margin:0 auto;padding:12px 16px 80px}
+h1{font-size:17px;margin:8px 0}
+h2{font-size:14px;margin:18px 0 6px;color:var(--mute);font-weight:600}
+nav{display:flex;gap:6px;margin:8px 0 12px}
+nav button{flex:1;padding:8px;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:8px;font:inherit}
+nav button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px}
+.q{font-weight:600;margin-bottom:6px}
+.opts{display:grid;grid-template-columns:1fr 1fr 1fr 1fr .72fr;gap:4px}
+.opts button{font-size:11px;padding:8px 0;white-space:nowrap}
+.opts button,.chips button,.sc button,.sb button,.seg button,.btn{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:8px;font:inherit;font-size:12px;padding:8px 2px;min-height:40px}
+.opts button.on.same{background:var(--same);border-color:var(--same)}
+.opts button.on.better{background:var(--better);color:#fff;border-color:var(--better)}
+.opts button.on.worse{background:var(--worse);color:#fff;border-color:var(--worse)}
+.opts button.on.vworse{background:var(--vworse);color:#fff;border-color:var(--vworse)}
+.opts button.on.hold{background:var(--hold);color:#fff;border-color:var(--hold)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{padding:6px 10px;font-size:13px}
+.sb{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.chips button.on,.sc button.on,.sb button.on,.seg button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.chips button.on.s{background:var(--same);color:var(--text);border-color:var(--same)}
+.chips button.on.b{background:var(--better);color:#fff;border-color:var(--better)}
+.chips button.on.w{background:var(--worse);color:#fff;border-color:var(--worse)}
+.chips button.on.d{background:var(--text);color:var(--bg);border-color:var(--text)}
+.chips button.on.h{background:var(--hold);color:#fff;border-color:var(--hold)}
+.chips button.h,.opts button.hold{font-size:11px;color:var(--mute)}
+.sc{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+input[type=date],input[type=number],textarea{font:inherit;border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--card);color:var(--text)}
+textarea{width:100%;min-height:60px}
+input[type=number]{width:90px}
+.hint{color:var(--mute);font-size:12px}
+.status{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:8px 16px;font-size:12px;color:var(--mute);text-align:center}
+.status.err{color:#c0392b}
+.seg{display:flex;gap:6px;margin:6px 0}
+.seg button{padding:6px 14px}
+.btn{padding:10px 14px;font-size:14px}
+.btn.pri{background:var(--acc);color:#fff;border-color:var(--acc)}
+.hm{display:grid;gap:2px;align-items:center}
+.hm .lb{font-size:11px;color:var(--mute);white-space:nowrap}
+.cell{height:18px;border-radius:3px;font-size:10px;color:#fff;text-align:center;line-height:18px;cursor:pointer}
+.hm.d7 .cell{height:26px;line-height:26px;font-size:12px}
+.hm.d14 .cell{height:22px;line-height:22px}
+.s-worse{background:var(--worse)}.s-vworse{background:var(--vworse)}.s-better{background:var(--better)}.s-same{background:var(--same);color:var(--text)}.s-hold{background:var(--hold)}
+.s-none{border:1px solid var(--line)}
+.legend{display:flex;flex-wrap:wrap;gap:8px;font-size:11px;color:var(--mute);margin-top:6px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;vertical-align:-1px;margin-right:3px}
+.calhead{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.calhead .btn{padding:6px 14px;min-height:36px}
+.calhead .btn:disabled{opacity:.35}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.cal .wd{text-align:center;font-size:11px;color:var(--mute)}
+.cal .dc{position:relative;height:46px;border:1px solid var(--line);border-radius:8px;padding:3px 5px;font:inherit;font-size:12px;line-height:1.2;background:transparent;color:var(--text);text-align:left;cursor:pointer}
+.cal .dc.empty{border:0;cursor:default}
+.cal .dc.fut{opacity:.35;cursor:default}
+.cal .dc.l1{background:var(--r1);color:var(--r1t);border-color:var(--r1)}
+.cal .dc.l2{background:var(--r2);color:var(--r2t);border-color:var(--r2)}
+.cal .dc.l3{background:var(--r3);color:var(--r3t);border-color:var(--r3)}
+.cal .dc.today{outline:2px solid var(--text);outline-offset:1px}
+.cal .dc.sel{box-shadow:inset 0 0 0 2px var(--text)}
+.cal .ic{position:absolute;right:4px;bottom:3px;font-size:11px;letter-spacing:1px}
+.legend i.r2{background:var(--r2)}
+.dl{display:flex;justify-content:space-between;gap:12px;padding:3px 0;border-bottom:1px solid var(--line);font-size:13px}
+.dl:last-of-type{border-bottom:0}
+.memo{white-space:pre-wrap;word-break:break-word;background:var(--bg);border-radius:8px;padding:8px;margin-top:6px;font-size:13px}
+svg text{fill:var(--mute);font-size:9px}
+.note{font-size:12px;color:var(--mute);line-height:1.6}
+.sig{border-left:6px solid var(--same)}
+.sig.ok{border-left-color:var(--better)}.sig.warn{border-left-color:#d9a21b}.sig.alert{border-left-color:#cf3f3f}
+.sig .t{font-weight:700;font-size:16px;margin-bottom:2px}
+details{margin-top:8px;font-size:12px;color:var(--mute)}
+details summary{cursor:pointer}
+/* ---- 周期(渋い紫) ---- */
+nav button.cyc{border-color:var(--vio)}
+nav button.cyc.on{background:var(--vio);color:var(--viox);border-color:var(--vio)}
+.chips button.on.v{background:var(--vio);color:var(--viox);border-color:var(--vio)}
+.cyc-card{border-color:var(--vio)}
+.tag{display:inline-block;font-size:10.5px;font-weight:600;color:var(--vio-t);background:var(--vio-bg);border-radius:6px;padding:1px 7px;margin-left:6px;vertical-align:1px}
+.stat{display:inline-block;background:var(--vio-bg);color:var(--vio-t);font-weight:600;border-radius:8px;padding:4px 10px;font-size:13px;margin:2px 0 8px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.pb{border:1.5px solid var(--vio);color:var(--vio-t);background:var(--card);border-radius:10px;padding:10px 4px;font:inherit;font-size:13.5px;min-height:44px}
+.pb.on{background:var(--vio);color:var(--viox)}
+.pb b{font-weight:800}
+.sub2{font-size:12.5px;font-weight:600;margin:12px 0 5px}
+.banner{border-left:6px solid var(--vio)}
+.k{font-size:19px;font-weight:700;margin:2px 0 4px}
+.k small{font-size:13px;font-weight:500;color:var(--mute)}
+.pill{display:inline-block;background:var(--vio-bg);color:var(--vio-t);border-radius:8px;padding:2px 9px;font-size:13px;font-weight:600;margin-bottom:6px}
+.warn{font-size:11.5px;color:var(--mute);line-height:1.6;margin-top:8px}
+.ibar{display:grid;grid-template-columns:5.2em 1fr;gap:6px 8px;align-items:center;font-size:12px}
+.ibar .t{display:flex;flex-direction:column;gap:3px}
+.ibar .rw{display:flex;align-items:center}
+.ibar .b{height:9px;border-radius:5px}
+.ibar .pc{font-size:10.5px;color:var(--mute);margin-left:6px}
+.cal .dc.per,.cal .dc.pre{padding-top:11px}
+.cal .dc.pms{background:var(--vio-bg);border-color:var(--vio-line);opacity:1}
+.cal .dc.pre{opacity:1}
+.cal .dc.per::before,.cal .dc.pre::before{content:"";position:absolute;top:4px;left:-2px;right:-2px;height:4px}
+.cal .dc.per::before{background:var(--vio-l)}
+.cal .dc.pre::before{background:repeating-linear-gradient(90deg,var(--vio-l) 0 5px,transparent 5px 9px)}
+.cal .dc.perS::before,.cal .dc.preS::before{left:6px;border-radius:3px 0 0 3px}
+.cal .dc.perE::before,.cal .dc.preE::before{right:6px;border-radius:0 3px 3px 0}
+.cal .ic b{color:var(--vio);font-weight:400}
+.legend i.bar{height:4px;width:14px;background:var(--vio-l);border-radius:2px;vertical-align:3px}
+.legend i.dash{height:4px;width:14px;background:repeating-linear-gradient(90deg,var(--vio-l) 0 4px,transparent 4px 7px);vertical-align:3px}
+.legend i.pm{background:var(--vio-bg);border:1px solid var(--vio-line)}
+</style>
+</head>
+<body>
+<main>
+<h1>ヒビログ</h1>
+<nav id="nav">
+  <button data-tab="input" class="on">入力</button>
+  <button data-tab="hist">履歴</button>
+  <button data-tab="cyc" class="cyc">周期</button>
+  <button data-tab="data">データ</button>
+</nav>
+
+<section id="t-input">
+  <div class="row" style="margin-bottom:8px">
+    <input type="date" id="date">
+    <button class="btn" id="today">今日</button>
+  </div>
+  <div class="hint" style="margin-bottom:8px">「悪い」「すごく悪い」=普段より悪い・難しい。「保留」=判断できない・当てはまらない(採点しません)。どれも押さなくてOK(未回答として残ります)。押し直すと解除できます。</div>
+  <div id="pnI"></div>
+  <div id="sigI" class="card sig" hidden></div>
+  <div id="form"></div>
+</section>
+
+<section id="t-hist" hidden>
+  <div id="sigH" class="card sig"></div>
+  <div class="seg" id="rng"><button data-r="7" class="on">7日</button><button data-r="14">14日</button><button data-r="30">30日</button></div>
+  <div id="sum" class="card"></div>
+  <h2>項目ごとの記録</h2>
+  <div class="card"><div id="hm" class="hm"></div><div class="legend" id="legend"></div></div>
+  <h2>「悪い」だった項目数の推移</h2>
+  <div class="card"><div id="chart"></div></div>
+  <h2>記録カレンダー</h2>
+  <div class="card">
+    <div class="calhead">
+      <button class="btn" id="calPrev" aria-label="前の月">◀</button>
+      <div class="q" id="calTitle" style="margin:0"></div>
+      <button class="btn" id="calNext" aria-label="次の月">▶</button>
+    </div>
+    <div id="calSum" class="hint" style="text-align:center;margin:4px 0 8px"></div>
+    <div class="cal" id="cal"></div>
+    <div class="legend"><span><i class="r2"></i>記録あり(濃いほど入力した項目が多い)</span><span><i class="bar"></i>生理(開始〜終了)</span><span><i class="pm"></i>PMS期間(予測)</span><span><i class="dash"></i>生理の予定(予測)</span><span>★ メモあり</span><span>☾ 寝落ちあり</span><span style="color:var(--vio)">◆ 周期の症状</span></div>
+  </div>
+  <div class="card" id="calDetail" hidden></div>
+  <div class="note">「悪い」の数は目安の一つで、診断や基準値ではありません。「保留」と未回答は、良い・悪いのどちらにも数えていません。生理の予測は「周期」タブで確認できます。</div>
+</section>
+
+<section id="t-cyc" hidden>
+  <div id="pnC"></div>
+  <div id="cycBody"></div>
+</section>
+
+<section id="t-data" hidden>
+  <div class="card">
+    <div class="q">書き出し(バックアップ)</div>
+    <div class="row">
+      <button class="btn pri" id="exJson">JSONで書き出し</button>
+      <button class="btn" id="exCsv">CSVで書き出し</button>
+    </div>
+    <div class="hint" style="margin-top:6px">週に1回の書き出しがおすすめです。書き出したファイルは公開リポジトリに置かないでください。</div>
+  </div>
+  <div class="card">
+    <div class="q">取り込み(JSON)</div>
+    <input type="file" id="imp" accept="application/json,.json">
+    <div class="hint" style="margin-top:6px">同じ日付は、更新日時が新しい方を残して統合します。</div>
+    <div id="impMsg" class="hint"></div>
+  </div>
+  <div class="card">
+    <div class="q">サインのしきい値</div>
+    <div class="row">注意 <input type="number" id="thW" min="1" max="16"> 点以上 ／ 要注意 <input type="number" id="thA" min="2" max="17"> 点以上</div>
+    <div class="hint" style="margin-top:6px">直近3日の平均点で判定します(初期値は 3 と 5)。要注意は注意より大きい値にしてください。</div>
+    <div id="thMsg" class="hint"></div>
+  </div>
+  <div class="card">
+    <div class="q">保存状況</div>
+    <div id="info" class="hint"></div>
+    <div class="hint">データはこのブラウザ内だけに保存され、外部へは送信されません。</div>
+  </div>
+</section>
+</main>
+<div class="status" id="status">&nbsp;</div>
+
+<script>
+(function(){
+'use strict';
+var KEY='dlog_v1_data';
+var ITEMS=[
+ {k:'sleep',q:'睡眠',s:'昨夜の眠り'},
+ {k:'fatigue',q:'身体の疲れ',s:'だるさ・重さ'},
+ {k:'mood',q:'気分',s:'落ち込み・緊張・イライラ'},
+ {k:'focus',q:'集中力',s:'続けられるか'},
+ {k:'decision',q:'判断力',s:'決めるのに時間がかかるか'},
+ {k:'appetite',q:'食欲・食事',s:'食べたい・食べられたか'}
+];
+var STATES=[['same','いつも通り'],['better','良い'],['worse','悪い'],['vworse','すごく悪い'],['hold','保留']];
+// 睡眠(昨夜の眠り)は複数選択。[コード, 表示名, ボタンの色クラス]
+var SLEEPQ=[['same','いつも通り','s'],['good','安眠','b'],['awake','中途覚醒','w'],['shallow','浅い','w'],['dozed','寝落ち','d'],['hold','保留','h']];
+var STLAB={same:'いつも通り',better:'良い',worse:'悪い',vworse:'すごく悪い',hold:'保留'};
+var SLLAB={same:'いつも通り',good:'安眠',awake:'中途覚醒',shallow:'浅い',dozed:'寝落ち',hold:'保留',worse:'悪い(旧形式)'};
+var OKCODE=['same','better','worse','vworse','hold'];
+var OKSLEEP=['same','good','awake','shallow','dozed','hold','worse'];
+var TASKS=[['housework','家事'],['grooming','身支度'],['reply','返信・連絡'],['outing','外出'],['bath','入浴'],['meal','食事の用意'],['decide','物事を決める'],['work','仕事・作業']];
+var SLEEP=[['lt4','4未満'],['4','4〜5'],['5','5〜6'],['6','6〜7'],['7','7〜8'],['8','8〜9'],['gt9','9以上']];
+// 周期の症状(複数選択)。null=未回答、[]=特になし
+var SYMP=[['headache','頭痛'],['cramp','腹痛・腰痛'],['bloat','むくみ'],['breast','胸の張り'],['irritable','イライラ'],['sleepy','眠気'],['appetite','食欲増加'],['low','落ち込み'],['skin','肌荒れ'],['nausea','吐き気']];
+var PMAX=10; // 終了日が未記録のとき、仮に生理期間として数える最長日数
+function sympLabel(c){for(var i=0;i<SYMP.length;i++)if(SYMP[i][0]===c)return SYMP[i][1];return c}
+function normSymp(v){
+  if(!Array.isArray(v))return null;
+  if(v.length===0)return [];
+  var a=v.filter(function(x,i){return SYMP.some(function(s){return s[0]===x})&&v.indexOf(x)===i});
+  return a.length?a:null;
+}
+function normSettings(s){
+  var w=3,a=5;
+  if(s&&Number.isInteger(s.warn)&&Number.isInteger(s.alert)&&s.warn>=1&&s.alert>s.warn&&s.alert<=17){w=s.warn;a=s.alert}
+  return {warn:w,alert:a};
+}
+// 旧形式(unknown/na、睡眠が1つの文字列)を新形式に変換する
+function normSleep(v){
+  if(Array.isArray(v)){
+    var a=v.filter(function(x,i){return OKSLEEP.indexOf(x)>=0&&v.indexOf(x)===i});
+    return a.length?a:null;
+  }
+  if(v==='same')return ['same'];
+  if(v==='better')return ['good'];
+  if(v==='worse')return ['worse'];
+  if(v==='unknown'||v==='na'||v==='hold')return ['hold'];
+  return null;
+}
+function normAns(src){
+  var a={};src=src||{};
+  ITEMS.forEach(function(it){
+    var v=src[it.k];
+    if(it.k==='sleep'){a.sleep=normSleep(v);return}
+    if(v==='unknown'||v==='na')v='hold';
+    a[it.k]=(OKCODE.indexOf(v)>=0)?v:null;
+  });
+  return a;
+}
+function bandOf(h){return h<4?'lt4':h<5?'4':h<6?'5':h<7?'6':h<8?'7':h<9?'8':'gt9'}
+function validBand(b){return SLEEP.some(function(s){return s[0]===b})}
+var MARK={worse:'悪',vworse:'悪+',better:'良',same:'＝',hold:'保'};
+function lblShow(i,n){return n<=7||((n-1-i)%(n===14?3:5)===0)}
+
+function pad(n){return n<10?'0'+n:''+n}
+function ymd(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
+function addDays(s,n){var p=s.split('-').map(Number);return ymd(new Date(p[0],p[1]-1,p[2]+n))}
+function today(){return ymd(new Date())}
+function dnum(s){var p=s.split('-').map(Number);return Math.round(Date.UTC(p[0],p[1]-1,p[2])/86400000)}
+function daysBetween(a,b){return dnum(b)-dnum(a)}
+function md(s){var p=s.split('-');return Number(p[1])+'/'+Number(p[2])}
+function dow(s){var p=s.split('-').map(Number);return ['日','月','火','水','木','金','土'][new Date(p[0],p[1]-1,p[2]).getDay()]}
+function $(id){return document.getElementById(id)}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+
+var db=load();
+var cur=today();
+var rng=7;
+
+function load(){
+  var raw=null;
+  try{raw=localStorage.getItem(KEY);
+    if(raw){var d=JSON.parse(raw);if(d&&Array.isArray(d.entries)){if(!Array.isArray(d.events))d.events=[];
+      d.settings=normSettings(d.settings);
+      d.entries.forEach(function(e){
+        e.answers=normAns(e.answers);
+        e.periodStart=e.periodStart===true?true:null;
+        e.periodEnd=e.periodEnd===true?true:null;
+        e.cycleSymptoms=normSymp(e.cycleSymptoms);
+        if(!validBand(e.sleepBand))e.sleepBand=(typeof e.sleepHours==='number')?bandOf(e.sleepHours):null;
+        delete e.sleepHours;
+      });
+      d.schemaVersion=3;
+      return d}}
+  }catch(e){
+    try{localStorage.setItem(KEY+'_corrupt_'+Date.now(),raw)}catch(e2){}
+  }
+  return {schemaVersion:3,entries:[],events:[],settings:normSettings(null)};
+}
+function save(){
+  try{localStorage.setItem(KEY,JSON.stringify(db));setStatus('保存しました '+new Date().toLocaleTimeString('ja-JP'));return true}
+  catch(e){setStatus('保存できません。ブラウザの設定を確認してください',true);return false}
+}
+function setStatus(t,err){var s=$('status');s.textContent=t;s.className='status'+(err?' err':'')}
+
+function getEntry(date){for(var i=0;i<db.entries.length;i++)if(db.entries[i].date===date)return db.entries[i];return null}
+function blank(date){
+  var a={};ITEMS.forEach(function(i){a[i.k]=null});
+  return {date:date,answers:a,sleepBand:null,stress:null,difficultTasks:null,periodStart:null,periodEnd:null,cycleSymptoms:null,note:'',updatedAt:''};
+}
+function touch(fn,dt){
+  var dd=dt||cur,e=getEntry(dd);
+  if(!e){e=blank(dd);db.entries.push(e)}
+  fn(e);
+  e.updatedAt=new Date().toISOString();
+  db.entries.sort(function(a,b){return a.date<b.date?-1:1});
+  save();
+}
+// 睡眠の感覚(複数選択)を1つの状態にまとめる。寝落ちは出来事なので状態に含めない
+function sleepState(e){
+  var a=e.answers.sleep;
+  if(!Array.isArray(a)||!a.length)return null;
+  if(a.indexOf('awake')>=0||a.indexOf('shallow')>=0||a.indexOf('worse')>=0)return 'worse';
+  if(a.indexOf('good')>=0)return 'better';
+  if(a.indexOf('same')>=0)return 'same';
+  if(a.indexOf('hold')>=0)return 'hold';
+  return null;
+}
+function itemState(e,k){return k==='sleep'?sleepState(e):(e.answers[k]||null)}
+function hasDozed(e){var a=e.answers.sleep;return Array.isArray(a)&&a.indexOf('dozed')>=0}
+function hasMemo(e){return !!(e&&e.note&&String(e.note).trim())}
+function stats(e){
+  var w=0,b=0,v=0;
+  ITEMS.forEach(function(i){var a=itemState(e,i.k);
+    if(a==='worse'||a==='vworse')w++;if(a==='better')b++;
+    if(a==='same'||a==='better'||a==='worse'||a==='vworse')v++;});
+  return {w:w,b:b,v:v};
+}
+
+/* ---------- 周期(生理の開始日・終了日と予測) ---------- */
+// 開始日・終了日は、その日の記録に付ける印。開始日の印〜次の終了日の印までを1回の生理として組み立てる
+function periods(){
+  var st=[],en=[],t=today(),out=[];
+  db.entries.forEach(function(e){if(e.periodStart)st.push(e.date);if(e.periodEnd)en.push(e.date)});
+  st.sort();en.sort();
+  st.forEach(function(s,i){
+    var nx=st[i+1]||null,end=null,j;
+    for(j=0;j<en.length;j++){if(en[j]>=s&&(nx===null||en[j]<nx)){end=en[j];break}}
+    var p={start:s,end:end,next:nx,open:!end,need:false,len:null,last:s};
+    if(end){p.last=end;p.len=daysBetween(s,end)+1}
+    else{
+      var last=addDays(s,PMAX-1);
+      if(t<last)last=t;
+      if(nx&&addDays(nx,-1)<last)last=addDays(nx,-1);
+      if(last<s)last=s;
+      p.last=last;
+      p.need=(nx!==null)||(daysBetween(s,t)+1>PMAX);
+    }
+    out.push(p);
+  });
+  return out;
+}
+function periodMap(ps){
+  var m={};
+  ps.forEach(function(p){
+    var n=Math.min(daysBetween(p.start,p.last),70);
+    for(var k=0;k<=n;k++)m[addDays(p.start,k)]={s:k===0,e:k===n};
+  });
+  return m;
+}
+function periodOn(ps,date){
+  for(var i=0;i<ps.length;i++)if(date>=ps[i].start&&date<=ps[i].last)return ps[i];
+  return null;
+}
+// 次の生理の予測。開始日どうしの間隔(15〜60日)の直近3回の平均
+function predict(ps){
+  var starts=ps.map(function(p){return p.start}),iv=[],i;
+  for(i=1;i<starts.length;i++){var d=daysBetween(starts[i-1],starts[i]);if(d>=15&&d<=60)iv.push(d)}
+  if(!iv.length)return null;
+  var use=iv.slice(-3),mean=avg(use),spread=0;
+  use.forEach(function(v){spread=Math.max(spread,Math.abs(v-mean))});
+  var half=use.length>=3?Math.max(2,Math.ceil(spread)):Math.max(4,Math.ceil(spread));
+  var lens=ps.filter(function(p){return !p.open}).map(function(p){return p.len}).slice(-3);
+  var len=lens.length?Math.max(1,Math.round(avg(lens))):5;
+  var ns=addDays(starts[starts.length-1],Math.round(mean));
+  return {start:ns,half:half,len:len,lenN:lens.length,use:use,mean:mean,pms0:addDays(ns,-7),pms1:addDays(ns,-1),late:ns<=today()};
+}
+// カレンダー用: 今日より後の予測日だけを印にする
+function predMaps(pr){
+  var per={},pms={},t=today();
+  if(!pr||pr.late)return {per:per,pms:pms};
+  function fill(map,from,n){
+    var list=[],k,d;
+    for(k=0;k<n;k++){d=addDays(from,k);if(d>t)list.push(d)}
+    list.forEach(function(x,i){map[x]={s:i===0,e:i===list.length-1}});
+  }
+  fill(per,pr.start,pr.len);fill(pms,pr.pms0,7);
+  return {per:per,pms:pms};
+}
+// 生理の開始日を0日として、-14〜+7日の点数や「悪い」の割合を集める
+function cycleAnalysis(ps){
+  var t=today(),sums={},cnts={},used=0,pmsPts=[],othPts=[],ip={},io={},r;
+  ITEMS.forEach(function(it){ip[it.k]=[0,0];io[it.k]=[0,0]});
+  ps.forEach(function(pp){
+    if(pp.start>t)return;
+    var got=0,d,e,p;
+    for(r=-14;r<=7;r++){
+      d=addDays(pp.start,r);if(d>t)continue;
+      e=getEntry(d);if(!e)continue;
+      var inPms=(r>=-7&&r<=-1);
+      p=dayPoints(e);
+      if(p!=null){sums[r]=(sums[r]||0)+p;cnts[r]=(cnts[r]||0)+1;got++;(inPms?pmsPts:othPts).push(p)}
+      var tg=inPms?ip:io;
+      ITEMS.forEach(function(it){
+        var a=itemState(e,it.k);
+        if(a==='same'||a==='better'||a==='worse'||a==='vworse'){tg[it.k][1]++;if(a==='worse'||a==='vworse')tg[it.k][0]++}
+      });
+    }
+    if(got>=5)used++;
+  });
+  var vals=[],mx=0,v;
+  for(r=-14;r<=7;r++){v=cnts[r]?sums[r]/cnts[r]:null;vals.push(v);if(v!=null&&v>mx)mx=v}
+  var rows=[];
+  ITEMS.forEach(function(it){
+    var a=ip[it.k],b=io[it.k];
+    if(a[1]>=5&&b[1]>=5)rows.push({q:it.q,pr:a[0]/a[1],or:b[0]/b[1]});
+  });
+  rows.sort(function(x,y){return y.pr-x.pr});
+  return {ok:used>=3&&pmsPts.length>=5&&othPts.length>=5,used:used,vals:vals,ymax:Math.max(6,Math.ceil(mx)),
+    pmsAvg:pmsPts.length?avg(pmsPts):null,othAvg:othPts.length?avg(othPts):null,pmsN:pmsPts.length,othN:othPts.length,rows:rows};
+}
+// 終了日が未記録のまま10日を超えた/次の開始日がある生理について、終了日をたずねる
+function noticeHtml(){
+  var ps=periods(),need=null,i;
+  for(i=0;i<ps.length;i++)if(ps[i].open&&ps[i].need){need=ps[i];break}
+  if(!need)return '';
+  var t=today(),mx=need.next?addDays(need.next,-1):t;
+  if(mx>t)mx=t;
+  return '<div class="card banner"><div class="q">生理の終了日を教えてください</div>'+
+    '<div class="hint">'+md(need.start)+' に開始した生理の終了日が、まだ記録されていません。</div>'+
+    '<div class="row" style="margin-top:6px"><input type="date" class="pnDate" min="'+need.start+'" max="'+mx+'">'+
+    '<button class="btn pnSet" data-s="'+need.start+'" data-mx="'+mx+'">この日を終了日にする</button></div>'+
+    '<div class="hint" style="margin-top:6px">押し間違いなら、その日の入力画面で「開始日」を解除してください。</div></div>';
+}
+function renderNotice(){var h=noticeHtml();$('pnI').innerHTML=h;$('pnC').innerHTML=h}
+function onNotice(ev){
+  var b=ev.target.closest('.pnSet');if(!b)return;
+  var inp=b.parentNode.querySelector('.pnDate'),v=inp.value,s=b.getAttribute('data-s'),mx=b.getAttribute('data-mx');
+  if(!v){setStatus('終了日を選んでください',true);return}
+  if(v<s||v>mx){setStatus('終了日は '+md(s)+' 〜 '+md(mx)+' の間で選んでください',true);return}
+  touch(function(e){e.periodEnd=true},v);
+  refresh();
+}
+var CYCCALC='<details><summary>予測の計算方法・限界</summary>'+
+ '<div>【予定日】直近3回(なければある分)の「開始日どうしの間隔」の平均を、いちばん新しい開始日に足した日です。間隔が15日未満・60日超のものは、押し忘れや押し間違いの可能性があるので除いています。</div>'+
+ '<div>【幅】間隔のばらつきの大きさです。記録が3回未満のときは、大きめにしています。</div>'+
+ '<div>【PMS期間】予定日の前7日間です。医学的な定義ではなく、このアプリでの目安です。</div>'+
+ '<div>【生理の長さ】開始日から終了日までの日数(両日を含む)の平均です。終了日が未記録のものは含めません。</div>'+
+ '<div>【限界】診断ではありません。周期が不規則な場合や、記録が少ない場合は外れます。避妊・妊娠の判断には使えません。</div></details>';
+function cycChart(an){
+  var W=340,H=150,L=24,R=6,T=8,B=26,iw=W-L-R,ih=H-T-B,n=22,bw=iw/n,ym=an.ymax,g,s;
+  function X(k){return L+bw*k}
+  function Y(v){return T+ih-ih*v/ym}
+  s='<svg viewBox="0 0 '+W+' '+H+'" width="100%" role="img" aria-label="生理の開始日を0日とした、日ごとの平均点数">';
+  s+='<rect x="'+X(7)+'" y="'+T+'" width="'+(bw*7)+'" height="'+ih+'" fill="var(--vio-bg)"/>';
+  s+='<text x="'+(X(7)+bw*3.5)+'" y="'+(T+10)+'" text-anchor="middle" style="fill:var(--vio-t);font-weight:600">PMS期間(生理前7日)</text>';
+  var step=ym<=6?2:Math.ceil(ym/3);
+  for(g=0;g<=ym;g+=step){
+    s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+Y(g)+'" y2="'+Y(g)+'" stroke="var(--line)" stroke-width=".6"/>';
+    s+='<text x="'+(L-4)+'" y="'+(Y(g)+3)+'" text-anchor="end">'+g+'</text>';
+  }
+  an.vals.forEach(function(v,k){
+    if(v==null)return;
+    var rel=k-14,col=(rel>=-7&&rel<=-1)?'var(--vio)':(rel>=0&&rel<=4?'var(--same)':'var(--r3)');
+    s+='<rect x="'+(X(k)+1.2)+'" y="'+Y(v)+'" width="'+(bw-2.4)+'" height="'+(T+ih-Y(v))+'" rx="2" fill="'+col+'"/>';
+  });
+  s+='<line x1="'+X(14)+'" x2="'+X(14)+'" y1="'+T+'" y2="'+(T+ih+4)+'" stroke="var(--text)" stroke-width="1" stroke-dasharray="3 2"/>';
+  s+='<text x="'+(X(14)+4)+'" y="'+(T+10)+'" style="fill:var(--text);font-weight:600">生理開始</text>';
+  [-14,-7,0,7].forEach(function(dd){s+='<text x="'+(X(dd+14)+bw/2)+'" y="'+(H-6)+'" text-anchor="middle">'+(dd>0?'+'+dd:dd)+'日</text>'});
+  return s+'</svg>';
+}
+function renderCyc(){
+  renderNotice();
+  var ps=periods(),pr=predict(ps),t=today(),h='';
+  h+='<div class="card"><div class="q">周期の目安</div>';
+  if(!ps.length){
+    h+='<div class="hint">まだ生理の開始日が記録されていません。入力タブの「からだの周期」で、開始日と終了日を記録してください。</div>';
+  }else if(!pr){
+    h+='<div class="hint">開始日が2回以上(間隔が15〜60日)記録されると、次の生理の予定日を出します。いまの開始日の記録: '+ps.length+'回</div>';
+  }else{
+    if(pr.late){
+      h+='<div class="k">予定日('+md(pr.start)+')を過ぎています <small>'+daysBetween(pr.start,t)+'日</small></div>';
+      h+='<div class="hint" style="margin-bottom:6px">開始日を記録すると、予測を更新します。</div>';
+    }else{
+      h+='<div class="k">次の生理: '+md(pr.start)+'('+dow(pr.start)+')ごろ <small>±'+pr.half+'日</small></div>';
+      h+='<div><span class="pill">PMS期間(予測) '+md(pr.pms0)+'〜'+md(pr.pms1)+'</span></div>';
+    }
+    h+='<div class="dl"><span>平均周期</span><span>'+Math.round(pr.mean)+'日(直近'+pr.use.length+'回: '+pr.use.join('・')+'日)</span></div>';
+    h+='<div class="dl"><span>生理の長さ</span><span>'+(pr.lenN?'平均 '+pr.len+'日('+pr.lenN+'回)':'―(終了日が記録されると出ます)')+'</span></div>';
+  }
+  if(ps.length){
+    var lp=ps[ps.length-1],nn=daysBetween(lp.start,t)+1;
+    if(nn>=1&&nn<=60)h+='<div class="dl"><span>今の周期</span><span>'+nn+'日目('+md(lp.start)+' の開始から)</span></div>';
+  }
+  h+='<div class="warn">過去の記録から出した目安です。診断や、避妊・妊娠の判断には使えません。周期が不規則だと外れます。</div>'+CYCCALC+'</div>';
+  var an=cycleAnalysis(ps);
+  h+='<div class="card"><div class="q">周期と調子</div>';
+  if(!an.ok){
+    h+='<div class="hint">生理の開始日と、その前後(開始の14日前〜7日後)の記録が3周期分たまると表示します。いまは '+an.used+' 周期分です。</div>';
+  }else{
+    h+='<div class="hint" style="margin-bottom:4px">生理の開始日を0日として、その日の「点数」(ストレスサインと同じ計算)の平均を並べています</div>'+cycChart(an);
+    h+='<div class="dl"><span>生理前7日の平均</span><span><b>'+an.pmsAvg.toFixed(1)+'</b> 点('+an.pmsN+'日分)</span></div>';
+    h+='<div class="dl"><span>それ以外の平均</span><span><b>'+an.othAvg.toFixed(1)+'</b> 点('+an.othN+'日分)</span></div>';
+  }
+  h+='</div>';
+  if(an.ok&&an.rows.length){
+    h+='<div class="card"><div class="q">生理前7日に「悪い」が多かった項目</div>'+
+      '<div class="hint" style="margin-bottom:8px"><span style="color:var(--vio)">■</span> 生理前7日　<span style="color:var(--same)">■</span> それ以外の日(回答のある日のうち「悪い」だった割合)</div><div class="ibar">';
+    an.rows.forEach(function(r){
+      h+='<div>'+esc(r.q)+'</div><div class="t">'+
+        '<div class="rw"><div class="b" style="width:'+Math.max(2,Math.round(r.pr*62))+'%;background:var(--vio)"></div><span class="pc">'+Math.round(r.pr*100)+'%</span></div>'+
+        '<div class="rw"><div class="b" style="width:'+Math.max(2,Math.round(r.or*62))+'%;background:var(--same)"></div><span class="pc">'+Math.round(r.or*100)+'%</span></div></div>';
+    });
+    h+='</div><div class="warn">「同時に起きやすい」までで、原因とは言えません。睡眠は「中途覚醒」か「浅い」があった日を数えています。日数が少ないうちは参考程度にしてください。</div></div>';
+  }
+  $('cycBody').innerHTML=h;
+}
+
+/* ---------- ストレス蓄積サイン ---------- */
+function isLowSleep(b){return b==='lt4'||b==='4'||b==='5'}
+function avg(a){return a.reduce(function(x,y){return x+y},0)/a.length}
+// 1日の点数(目安・満点17)。回答が3項目未満の日は点数にしない
+function dayPoints(e){
+  if(!e)return null;
+  var s=stats(e);
+  if(s.v<3)return null;
+  var p=0;
+  ITEMS.forEach(function(it){var a=itemState(e,it.k);p+=(a==='vworse')?2:(a==='worse')?1:0});
+  var t=Array.isArray(e.difficultTasks)?e.difficultTasks.length:0;
+  if(t>=3)p+=2;else if(t>=1)p+=1;
+  if(e.stress===4)p+=2;else if(e.stress===3)p+=1;
+  if(e.sleepBand==='lt4')p+=2;else if(e.sleepBand==='4'||e.sleepBand==='5')p+=1;
+  return p;
+}
+function signal(){
+  var t=today(),st=db.settings,p3=[],cnt={},low=0,hard=0,hi=0,i,e,p;
+  for(i=0;i<3;i++){
+    e=getEntry(addDays(t,-i));p=dayPoints(e);
+    if(p==null)continue;
+    p3.push(p);
+    ITEMS.forEach(function(it){var a=itemState(e,it.k);if(a==='worse'||a==='vworse')cnt[it.q]=(cnt[it.q]||0)+1});
+    if(isLowSleep(e.sleepBand))low++;
+    if(Array.isArray(e.difficultTasks)&&e.difficultTasks.length)hard++;
+    if(e.stress>=3)hi++;
+  }
+  if(p3.length<2)return {level:'hold'};
+  var a3=avg(p3),level='ok',why=[],hiDays=0;
+  for(i=0;i<7;i++){p=dayPoints(getEntry(addDays(t,-i)));if(p!=null&&p>=st.alert)hiDays++}
+  if(a3>=st.alert||hiDays>=3)level='alert';
+  else if(a3>=st.warn)level='warn';
+  var base=[];
+  for(i=3;i<=32;i++){p=dayPoints(getEntry(addDays(t,-i)));if(p!=null)base.push(p)}
+  var b=base.length>=14?avg(base):null;
+  if(b!=null&&a3>=b+2&&level==='ok'){level='warn';why.push('自分の普段(過去30日の平均 '+b.toFixed(1)+' 点)より高めです')}
+  if(hiDays>=3)why.push('直近7日に '+st.alert+' 点以上の日が '+hiDays+' 日あります');
+  var names=Object.keys(cnt).sort(function(x,y){return cnt[y]-cnt[x]});
+  if(names.length)why.push('「悪い」が多い項目: '+names.slice(0,3).map(function(n){return n+'('+cnt[n]+'日)'}).join('、'));
+  if(low)why.push('睡眠6時間未満: '+low+'日');
+  if(hard)why.push('難しい生活動作あり: '+hard+'日');
+  if(hi)why.push('ストレス感3以上: '+hi+'日');
+  return {level:level,a3:a3,n:p3.length,b:b,why:why};
+}
+var LV={
+  ok:['目立ったサインはありません','ok'],
+  warn:['注意:負荷が溜まってきているサインがあります','warn'],
+  alert:['要注意:負荷が高い状態が続いています','alert'],
+  hold:['判定保留','hold']
+};
+var CALC='<details><summary>点数と判定の計算方法・限界</summary>'+
+ '<div>【1日の点数(満点17)】身体の疲れ・気分・集中力・判断力・食欲は、「悪い」で+1、「すごく悪い」で+2/睡眠の感覚は「中途覚醒」か「浅い」があれば+1(「安眠」「寝落ち」は採点しません)/難しい生活動作が1〜2個で+1、3個以上で+2/ストレス感が3で+1、4で+2/睡眠時間が6時間未満で+1、4時間未満で+2。'+
+ '「保留」と未回答は加点も減点もしません。答えた項目(いつも通り・良い・悪い・すごく悪い)が3項目未満の日は点数にしません。睡眠は「感覚」と「時間」の両方を見るため、2回数えられます。</div>'+
+ '<div>【判定】直近3日(点数のある日)の平均が、注意のしきい値以上で「注意」、要注意のしきい値以上、または直近7日に要注意のしきい値以上の日が3日以上で「要注意」。'+
+ '14日分以上たまると、自分の過去30日の平均より2点以上高い場合も「注意」にします。</div>'+
+ '<div>【限界】診断ではありません。点数の配分としきい値は根拠のある基準ではなく、使いながら調整する仮の値です。見逃しも空振りもあります。アプリを開いたときだけ表示されます。</div></details>';
+function renderSig(){
+  var s=signal(),l=LV[s.level],st=db.settings,body='',full='';
+  if(s.level==='hold'){
+    body='<div>直近3日のうち2日以上、3項目以上に答えた日があると判定します。</div>';
+  }else{
+    body='<div>直近3日の平均: <b>'+s.a3.toFixed(1)+'</b> 点(満点17 / 注意 '+st.warn+' 点〜、要注意 '+st.alert+' 点〜)</div>';
+    if(s.why.length)full+='<div class="hint">'+s.why.map(esc).join(' ／ ')+'</div>';
+    if(s.level==='warn')full+='<div>予定を減らす、休む時間を確保するなど、負荷を下げることを考える目安にしてください。</div>';
+    if(s.level==='alert')full+='<div>一人で抱えず、支援員や主治医など身近な人に状況を共有する目安にしてください。</div>';
+  }
+  var cls='card sig '+l[1];
+  var i=$('sigI'),h=$('sigH');
+  i.hidden=false;i.className=cls;
+  i.innerHTML='<div class="t">'+l[0]+'</div>'+body+(s.level==='warn'||s.level==='alert'?full:'');
+  h.className=cls;
+  h.innerHTML='<div class="t">いまのサイン: '+l[0]+'</div>'+body+full+CALC;
+}
+
+/* ---------- 入力 ---------- */
+function renderForm(){
+  var e=getEntry(cur)||blank(cur);
+  var h='';
+  ITEMS.forEach(function(it){
+    h+='<div class="card"><div class="q">'+it.q+' <span class="hint">'+it.s+'</span></div>';
+    if(it.k==='sleep'){
+      var sl=Array.isArray(e.answers.sleep)?e.answers.sleep:[];
+      h+='<div class="chips">';
+      SLEEPQ.forEach(function(s){
+        h+='<button data-a="sleepq" data-v="'+s[0]+'" class="'+s[2]+(sl.indexOf(s[0])>=0?' on':'')+'">'+s[1]+'</button>';
+      });
+      h+='</div><div class="hint" style="margin-top:4px">複数選べます。寝落ち=気づいたら寝ていた(採点せず、カレンダーに☾で残ります)'+
+        (sl.indexOf('worse')>=0?'<br>この日は旧形式の「悪い」で記録されています。選び直すと置き換わります。':'')+'</div></div>';
+    }else{
+      h+='<div class="opts">';
+      STATES.forEach(function(s){
+        h+='<button data-a="ans" data-k="'+it.k+'" data-v="'+s[0]+'" class="'+s[0]+(e.answers[it.k]===s[0]?' on':'')+'">'+s[1]+'</button>';
+      });
+      h+='</div></div>';
+    }
+  });
+  h+='<div class="card"><div class="q">難しかった生活動作 <span class="hint">普段できることで</span></div><div class="chips">';
+  var t=e.difficultTasks;
+  h+='<button data-a="tasknone" class="'+(Array.isArray(t)&&t.length===0?'on':'')+'">特になし</button>';
+  TASKS.forEach(function(x){
+    h+='<button data-a="task" data-v="'+x[0]+'" class="'+(Array.isArray(t)&&t.indexOf(x[0])>=0?'on':'')+'">'+x[1]+'</button>';
+  });
+  h+='</div></div>';
+  h+='<div class="card"><div class="q">全体のストレス感 <span class="hint">0=ほぼなし 〜 4=非常に強い</span></div><div class="sc">';
+  for(var i=0;i<=4;i++)h+='<button data-a="stress" data-v="'+i+'" class="'+(e.stress===i?'on':'')+'">'+i+'</button>';
+  h+='</div></div>';
+  h+='<div class="card"><div class="q">睡眠時間 <span class="hint">時間・5ちょうどは「5〜6」</span></div><div class="sb">';
+  SLEEP.forEach(function(s){
+    h+='<button data-a="sleepband" data-v="'+s[0]+'" class="'+(e.sleepBand===s[0]?'on':'')+'">'+s[1]+'</button>';
+  });
+  h+='</div></div>';
+  var cps=periods(),cpo=periodOn(cps,cur),stx='生理期間の記録はありません';
+  if(cpo){
+    stx='生理中 ・ '+md(cpo.start)+' 開始から'+(daysBetween(cpo.start,cur)+1)+'日目';
+    if(cur===cpo.start)stx+='(開始日)';
+    if(!cpo.open&&cur===cpo.end)stx+='(終了日)';
+    if(cpo.open&&cpo.need)stx+=' ・ 終了日が未記録';
+  }
+  h+='<div class="card cyc-card"><div class="q">からだの周期<span class="tag">任意</span></div>'+
+     '<div class="hint" style="margin-bottom:6px">必要な日だけ。何も押さなくてOKです</div>'+
+     '<div class="stat">'+esc(stx)+'</div>'+
+     '<div class="two"><button class="pb'+(e.periodStart?' on':'')+'" data-a="pstart">この日を<b>開始日</b>にする</button>'+
+     '<button class="pb'+(e.periodEnd?' on':'')+'" data-a="pend">この日を<b>終了日</b>にする</button></div>'+
+     '<div class="hint" style="margin-top:5px">終了日を押すまで、生理中として数えます(最長'+PMAX+'日。超えたら確認します)</div>'+
+     '<div class="hint" id="pmsg" style="color:#c0392b"></div>'+
+     '<div class="sub2">からだ・気持ちの症状 <span class="hint">複数選べます</span></div><div class="chips">';
+  var cs=e.cycleSymptoms;
+  h+='<button data-a="sympnone" class="'+(Array.isArray(cs)&&cs.length===0?'on v':'')+'">特になし</button>';
+  SYMP.forEach(function(x){h+='<button data-a="symp" data-v="'+x[0]+'" class="'+(Array.isArray(cs)&&cs.indexOf(x[0])>=0?'on v':'')+'">'+x[1]+'</button>'});
+  h+='</div></div>';
+  h+='<div class="card"><div class="q">一言メモ</div><textarea id="memo" maxlength="500">'+esc(e.note||'')+'</textarea></div>';
+  $('form').innerHTML=h;
+  renderNotice();
+  renderSig();
+}
+// 睡眠の複数選択。いつも通り/安眠は他の感覚と両立せず、保留は単独。寝落ちはどれとでも両立
+function toggleSleep(c,v){
+  var i=c.indexOf(v);
+  if(i>=0){c.splice(i,1);return c}
+  if(v==='hold')return ['hold'];
+  c=c.filter(function(x){return x!=='hold'});
+  var Q=['same','good','awake','shallow','worse'];
+  if(v==='same'||v==='good')c=c.filter(function(x){return Q.indexOf(x)<0});
+  else if(v==='awake'||v==='shallow')c=c.filter(function(x){return x!=='same'&&x!=='good'&&x!=='worse'});
+  c.push(v);
+  return c;
+}
+$('form').addEventListener('click',function(ev){
+  var b=ev.target.closest('button');if(!b)return;
+  var a=b.getAttribute('data-a'),k=b.getAttribute('data-k'),v=b.getAttribute('data-v');
+  if(a==='ans')touch(function(e){e.answers[k]=(e.answers[k]===v)?null:v});
+  else if(a==='sleepq')touch(function(e){
+    var c=Array.isArray(e.answers.sleep)?e.answers.sleep.slice():[];
+    c=toggleSleep(c,v);e.answers.sleep=c.length?c:null;});
+  else if(a==='pstart')touch(function(e){e.periodStart=e.periodStart?null:true});
+  else if(a==='pend'){
+    var ex=getEntry(cur);
+    if(!(ex&&ex.periodEnd)&&!db.entries.some(function(x){return x.periodStart&&x.date<=cur})){
+      var pm=$('pmsg');
+      if(pm)pm.textContent='先に、生理の開始日を記録してください(この日以前の日付で記録します)。';
+      return;
+    }
+    touch(function(e){e.periodEnd=e.periodEnd?null:true});
+  }
+  else if(a==='sympnone')touch(function(e){e.cycleSymptoms=(Array.isArray(e.cycleSymptoms)&&e.cycleSymptoms.length===0)?null:[]});
+  else if(a==='symp')touch(function(e){
+    var c=Array.isArray(e.cycleSymptoms)?e.cycleSymptoms.slice():[];
+    var i=c.indexOf(v);if(i>=0)c.splice(i,1);else c.push(v);
+    e.cycleSymptoms=c.length?c:null;});
+  else if(a==='stress')touch(function(e){var n=Number(v);e.stress=(e.stress===n)?null:n});
+  else if(a==='sleepband')touch(function(e){e.sleepBand=(e.sleepBand===v)?null:v});
+  else if(a==='tasknone')touch(function(e){e.difficultTasks=(Array.isArray(e.difficultTasks)&&e.difficultTasks.length===0)?null:[]});
+  else if(a==='task')touch(function(e){
+    var t=Array.isArray(e.difficultTasks)?e.difficultTasks.slice():[];
+    var i=t.indexOf(v);if(i>=0)t.splice(i,1);else t.push(v);
+    e.difficultTasks=t.length?t:null;});
+  else return;
+  renderForm();
+});
+$('form').addEventListener('input',function(ev){
+  if(ev.target.id==='memo'){
+    var m=ev.target.value;touch(function(e){e.note=m});
+  }
+});
+$('date').value=cur;$('date').max=today();
+$('date').addEventListener('change',function(){if(this.value){cur=this.value;renderForm()}});
+$('today').addEventListener('click',function(){cur=today();$('date').value=cur;renderForm()});
+
+/* ---------- タブ ---------- */
+var tab='input';
+function showTab(t){
+  tab=t;
+  ['input','hist','cyc','data'].forEach(function(n){$('t-'+n).hidden=(n!==t)});
+  Array.prototype.forEach.call($('nav').children,function(b){b.classList.toggle('on',b.getAttribute('data-tab')===t)});
+  refresh();
+}
+function refresh(){
+  if(tab==='input')renderForm();
+  else if(tab==='hist')renderHist();
+  else if(tab==='cyc')renderCyc();
+  else if(tab==='data')renderInfo();
+}
+$('pnI').addEventListener('click',onNotice);
+$('pnC').addEventListener('click',onNotice);
+$('nav').addEventListener('click',function(ev){var b=ev.target.closest('button');if(b)showTab(b.getAttribute('data-tab'))});
+
+/* ---------- 履歴 ---------- */
+$('rng').addEventListener('click',function(ev){
+  var b=ev.target.closest('button');if(!b)return;
+  rng=Number(b.getAttribute('data-r'));
+  Array.prototype.forEach.call($('rng').children,function(x){x.className=(x===b)?'on':''});
+  renderHist();
+});
+function days(n){var a=[],t=today();for(var i=n-1;i>=0;i--)a.push(addDays(t,-i));return a}
+function taskState(e){
+  if(!e)return 'none';
+  var t=e.difficultTasks;
+  if(t==null)return 'none';
+  return t.length===0?'same':'worse';
+}
+function renderHist(){
+  renderSig();
+  var ds=days(rng);
+  var es=ds.map(getEntry);
+  // 概要
+  var rec=0,any=0,three=0,shN=0,shLow=0,sumW=0,wDays=0,doz=0;
+  es.forEach(function(e){
+    if(!e)return;rec++;
+    if(hasDozed(e))doz++;
+    var s=stats(e);
+    if(s.v>0){wDays++;sumW+=s.w}
+    if(s.w>=1)any++;if(s.w>=3)three++;
+    if(e.sleepBand){shN++;if(e.sleepBand==='lt4'||e.sleepBand==='4'||e.sleepBand==='5')shLow++}
+  });
+  $('sum').innerHTML='<div class="q">直近'+rng+'日のまとめ</div>'+
+    '<div>記録した日: <b>'+rec+'</b> / '+rng+'日</div>'+
+    '<div>「悪い」が1項目以上あった日: <b>'+any+'</b>日(3項目以上: <b>'+three+'</b>日)</div>'+
+    '<div>睡眠が6時間未満だった日: <b>'+shLow+'</b>日'+(shN?'(睡眠時間を選んだ'+shN+'日のうち)':'(睡眠時間の記録なし)')+'</div>'+
+    '<div>寝落ちがあった日: <b>'+doz+'</b>日</div>'+
+    '<div class="hint">回答のある日の「悪い」平均: '+(wDays?(sumW/wDays).toFixed(1):'―')+' 項目 / 6項目中</div>';
+  // ヒートマップ
+  var hm=$('hm');hm.className='hm d'+rng;
+  hm.style.gridTemplateColumns='5.6em repeat('+rng+',minmax(0,1fr))';
+  var h='<div></div>';
+  ds.forEach(function(d,i){
+    var p=d.split('-');
+    h+='<div class="lb" style="text-align:'+(i===rng-1?'right':'center')+';min-width:0;overflow:visible">'+(lblShow(i,rng)?(Number(p[1])+'/'+Number(p[2])):'')+'</div>';
+  });
+  function row(label,fn){
+    h+='<div class="lb">'+label+'</div>';
+    ds.forEach(function(d,i){
+      var e=es[i],s=fn(e);
+      h+='<div class="cell s-'+s+'" data-d="'+d+'" title="'+d+'">'+(rng===7&&MARK[s]?MARK[s]:'')+'</div>';
+    });
+  }
+  ITEMS.forEach(function(it){row(it.q,function(e){return (e&&itemState(e,it.k))||'none'})});
+  row('生活動作',taskState);
+  hm.innerHTML=h;
+  $('legend').innerHTML=
+    '<span><i class="s-vworse"></i>すごく悪い</span><span><i class="s-worse"></i>悪い</span><span><i class="s-better"></i>良い・安眠</span><span><i class="s-same"></i>いつも通り</span>'+
+    '<span><i class="s-hold"></i>保留</span><span><i style="border:1px solid var(--line)"></i>未回答/未記録</span>'+
+    '<span>(生活動作: 灰=特になし、橙=難しい動作あり。睡眠は中途覚醒・浅いがあれば「悪い」色。寝落ちは色に含めず、下のカレンダーに☾で出ます)</span>';
+  // グラフ
+  $('chart').innerHTML=chart(ds,es);
+  renderCal();
+}
+
+/* ---------- カレンダー ---------- */
+var calMonth=today().slice(0,7),calSel=null;
+function taskLabel(c){for(var i=0;i<TASKS.length;i++)if(TASKS[i][0]===c)return TASKS[i][1];return c}
+function bandLabel(c){
+  if(c==='lt4')return '4時間未満';
+  if(c==='gt9')return '9時間以上';
+  for(var i=0;i<SLEEP.length;i++)if(SLEEP[i][0]===c)return SLEEP[i][1]+'時間';
+  return '';
+}
+// 入力のある項目数(保留も「入力した」に数える。継続の記録が目的のため)
+function recCount(e){
+  var n=0;
+  ITEMS.forEach(function(it){
+    var a=e.answers[it.k];
+    if(it.k==='sleep'){if(Array.isArray(a)&&a.length)n++}
+    else if(a)n++;
+  });
+  if(e.difficultTasks!=null)n++;
+  if(e.stress!=null)n++;
+  if(e.sleepBand)n++;
+  if(hasMemo(e))n++;
+  if(e.periodStart||e.periodEnd)n++;
+  if(Array.isArray(e.cycleSymptoms))n++;
+  return n;
+}
+function recLevel(n){return n===0?0:n<=3?1:n<=6?2:3}
+function renderCal(){
+  var ym=calMonth.split('-'),y=Number(ym[0]),m=Number(ym[1])-1;
+  $('calTitle').textContent=y+'年'+(m+1)+'月';
+  var first=new Date(y,m,1).getDay(),dim=new Date(y,m+1,0).getDate(),t=today();
+  var h='',i,d;
+  ['日','月','火','水','木','金','土'].forEach(function(w){h+='<div class="wd">'+w+'</div>'});
+  for(i=0;i<first;i++)h+='<div class="dc empty"></div>';
+  var ps=periods(),pm=periodMap(ps),pv=predMaps(predict(ps));
+  var rec=0,doz=0,memo=0,pdays=0;
+  for(d=1;d<=dim;d++){
+    var ds=y+'-'+pad(m+1)+'-'+pad(d),e=getEntry(ds),lv=e?recLevel(recCount(e)):0,fut=ds>t,ic='',pc='';
+    if(pm[ds]){pc=' per'+(pm[ds].s?' perS':'')+(pm[ds].e?' perE':'');if(ds<=t)pdays++}
+    else if(pv.per[ds])pc=' pre'+(pv.per[ds].s?' preS':'')+(pv.per[ds].e?' preE':'');
+    else if(pv.pms[ds])pc=' pms';
+    if(e&&hasMemo(e)){ic+='★';memo++}
+    if(e&&hasDozed(e)){ic+='☾';doz++}
+    if(e&&Array.isArray(e.cycleSymptoms)&&e.cycleSymptoms.length)ic+='<b>◆</b>';
+    if(lv)rec++;
+    h+='<button class="dc'+(lv?' l'+lv:'')+pc+(ds===t?' today':'')+(ds===calSel?' sel':'')+(fut?' fut':'')+'" data-cd="'+ds+'"'+(fut?' disabled':'')+'>'+d+(ic?'<span class="ic">'+ic+'</span>':'')+'</button>';
+  }
+  $('cal').innerHTML=h;
+  $('calSum').textContent='この月: 記録 '+rec+'日 / 寝落ち '+doz+'日 / メモ '+memo+'件'+(pdays?' / 生理 '+pdays+'日':'');
+  $('calNext').disabled=(calMonth>=t.slice(0,7));
+  renderCalDetail();
+}
+function renderCalDetail(){
+  var box=$('calDetail');
+  if(!calSel){box.hidden=true;box.innerHTML='';return}
+  var e=getEntry(calSel),h='<div class="q">'+calSel+' の記録</div>';
+  box.hidden=false;
+  var po=periodOn(periods(),calSel),ptxt='';
+  if(po){
+    ptxt='生理中('+(daysBetween(po.start,calSel)+1)+'日目';
+    if(calSel===po.start)ptxt+='・開始日';
+    if(!po.open&&calSel===po.end)ptxt+='・終了日';
+    ptxt+=')';
+  }
+  var prow=ptxt?'<div class="dl"><span>生理</span><span>'+esc(ptxt)+'</span></div>':'';
+  if(!e||recCount(e)===0){
+    h+=(prow||'<div class="hint">この日の記録はありません。</div>');
+  }else{
+    var none='<span class="hint">未回答</span>';
+    ITEMS.forEach(function(it){
+      var v=e.answers[it.k],line=null;
+      if(it.k==='sleep'){if(Array.isArray(v)&&v.length)line=v.map(function(x){return SLLAB[x]||x}).join('・')}
+      else if(v)line=STLAB[v]||v;
+      h+='<div class="dl"><span>'+it.q+'</span><span>'+(line?esc(line):none)+'</span></div>';
+    });
+    var t=e.difficultTasks;
+    h+='<div class="dl"><span>難しかった生活動作</span><span>'+(t==null?none:(t.length?esc(t.map(taskLabel).join('・')):'特になし'))+'</span></div>';
+    h+='<div class="dl"><span>ストレス感</span><span>'+(e.stress==null?none:e.stress+' / 4')+'</span></div>';
+    h+='<div class="dl"><span>睡眠時間</span><span>'+(e.sleepBand?esc(bandLabel(e.sleepBand)):none)+'</span></div>';
+    h+=prow;
+    if(Array.isArray(e.cycleSymptoms))h+='<div class="dl"><span>周期の症状</span><span>'+(e.cycleSymptoms.length?esc(e.cycleSymptoms.map(sympLabel).join('・')):'特になし')+'</span></div>';
+    if(hasMemo(e))h+='<div class="q" style="margin:8px 0 0">★ メモ</div><div class="memo">'+esc(e.note)+'</div>';
+  }
+  h+='<div style="margin-top:10px"><button class="btn pri" id="calEdit">この日を入力・編集</button></div>';
+  box.innerHTML=h;
+}
+function shiftMonth(n){
+  var p=calMonth.split('-').map(Number),dt=new Date(p[0],p[1]-1+n,1);
+  calMonth=dt.getFullYear()+'-'+pad(dt.getMonth()+1);calSel=null;renderCal();
+}
+$('calPrev').addEventListener('click',function(){shiftMonth(-1)});
+$('calNext').addEventListener('click',function(){shiftMonth(1)});
+$('cal').addEventListener('click',function(ev){
+  var b=ev.target.closest('[data-cd]');if(!b||b.disabled)return;
+  calSel=b.getAttribute('data-cd');renderCal();
+  try{$('calDetail').scrollIntoView({block:'nearest',behavior:'smooth'})}catch(e){}
+});
+$('calDetail').addEventListener('click',function(ev){
+  if(ev.target.closest('#calEdit')&&calSel){cur=calSel;$('date').value=cur;showTab('input')}
+});
+function chart(ds,es){
+  var W=360,H=130,L=22,R=14,T=8,B=20,iw=W-L-R,ih=H-T-B,n=ds.length;
+  function x(i){return L+(n===1?iw/2:iw*i/(n-1))}
+  function y(v){return T+ih-ih*v/6}
+  var s='<svg viewBox="0 0 '+W+' '+H+'" width="100%" role="img" aria-label="悪い項目数の推移">';
+  for(var g=0;g<=6;g+=2){
+    s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(g)+'" y2="'+y(g)+'" stroke="var(--line)" stroke-width="0.5"/>';
+    s+='<text x="'+(L-4)+'" y="'+(y(g)+3)+'" text-anchor="end">'+g+'</text>';
+  }
+  var seg=[],pts=[];
+  ds.forEach(function(d,i){
+    var e=es[i],st=e?stats(e):null;
+    if(st&&st.v>0)pts.push([x(i),y(st.w)]);
+    else{if(pts.length)seg.push(pts);pts=[]}
+  });
+  if(pts.length)seg.push(pts);
+  seg.forEach(function(p){
+    if(p.length>1)s+='<polyline fill="none" stroke="var(--worse)" stroke-width="1.5" points="'+p.map(function(q){return q[0].toFixed(1)+','+q[1].toFixed(1)}).join(' ')+'"/>';
+    p.forEach(function(q){s+='<circle cx="'+q[0].toFixed(1)+'" cy="'+q[1].toFixed(1)+'" r="2.6" fill="var(--worse)"/>'});
+  });
+  ds.forEach(function(d,i){
+    if(lblShow(i,n)){var p=d.split('-');s+='<text x="'+x(i)+'" y="'+(H-6)+'" text-anchor="middle">'+Number(p[1])+'/'+Number(p[2])+'</text>'}
+  });
+  return s+'</svg><div class="hint">縦軸: 悪いと答えた項目数(6項目中)。回答のない日は線を切っています。</div>';
+}
+function jump(ev){
+  var c=ev.target.closest('[data-d]');if(!c)return;
+  cur=c.getAttribute('data-d');$('date').value=cur;showTab('input');
+}
+$('hm').addEventListener('click',jump);
+
+/* ---------- データ ---------- */
+function renderInfo(){
+  $('thW').value=db.settings.warn;$('thA').value=db.settings.alert;
+  var n=db.entries.length;
+  $('info').textContent='記録件数: '+n+'日分'+(n?'(最古 '+db.entries[0].date+' 〜 最新 '+db.entries[n-1].date+')':'');
+}
+function download(name,type,text){
+  var blob=new Blob([text],{type:type});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download=name;
+  document.body.appendChild(a);a.click();
+  setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500);
+}
+$('exJson').addEventListener('click',function(){
+  var o={schemaVersion:3,exportedAt:new Date().toISOString(),entries:db.entries,events:db.events,settings:db.settings};
+  download('dlog-'+today()+'.json','application/json',JSON.stringify(o,null,2));
+  setStatus('JSONを書き出しました');
+});
+function csvCell(v){
+  if(v==null||v==='')return '';
+  v=String(v);
+  if(/^[=+\-@]/.test(v))v="'"+v;
+  return '"'+v.replace(/"/g,'""')+'"';
+}
+$('exCsv').addEventListener('click',function(){
+  var head=['date'].concat(ITEMS.map(function(i){return i.k}),['difficultTasks','stress','sleepBand','periodStart','periodEnd','cycleSymptoms','note']);
+  var lines=[head.join(',')];
+  db.entries.forEach(function(e){
+    var row=[e.date].concat(ITEMS.map(function(i){var a=e.answers[i.k];return Array.isArray(a)?a.join('|'):a}));
+    row.push(e.difficultTasks==null?'':(e.difficultTasks.length?e.difficultTasks.join('|'):'none'));
+    row.push(e.stress,e.sleepBand,e.periodStart?1:'',e.periodEnd?1:'',e.cycleSymptoms==null?'':(e.cycleSymptoms.length?e.cycleSymptoms.join('|'):'none'),e.note);
+    lines.push(row.map(csvCell).join(','));
+  });
+  download('dlog-'+today()+'.csv','text/csv;charset=utf-8','\ufeff'+lines.join('\r\n'));
+  setStatus('CSVを書き出しました');
+});
+$('imp').addEventListener('change',function(){
+  var f=this.files&&this.files[0];if(!f)return;
+  var input=this;
+  var r=new FileReader();
+  r.onload=function(){
+    try{
+      var d=JSON.parse(r.result);
+      if(!d||!Array.isArray(d.entries))throw new Error('形式が違います');
+      var add=0,upd=0,skip=0;
+      d.entries.forEach(function(ne){
+        if(!ne||!/^\d{4}-\d{2}-\d{2}$/.test(ne.date)||typeof ne.answers!=='object'){skip++;return}
+        var base=blank(ne.date);
+        base.answers=normAns(ne.answers);
+        base.sleepBand=validBand(ne.sleepBand)?ne.sleepBand:((typeof ne.sleepHours==='number')?bandOf(ne.sleepHours):null);
+        base.stress=(typeof ne.stress==='number')?ne.stress:null;
+        base.difficultTasks=Array.isArray(ne.difficultTasks)?ne.difficultTasks.map(String):null;
+        base.periodStart=ne.periodStart===true?true:null;
+        base.periodEnd=ne.periodEnd===true?true:null;
+        base.cycleSymptoms=normSymp(ne.cycleSymptoms);
+        base.note=typeof ne.note==='string'?ne.note:'';
+        base.updatedAt=typeof ne.updatedAt==='string'?ne.updatedAt:'';
+        var ex=getEntry(ne.date);
+        if(!ex){db.entries.push(base);add++}
+        else if((base.updatedAt||'')>(ex.updatedAt||'')){db.entries[db.entries.indexOf(ex)]=base;upd++}
+        else skip++;
+      });
+      if(Array.isArray(d.events)){
+        d.events.forEach(function(ev){
+          if(ev&&ev.id&&!db.events.some(function(x){return x.id===ev.id}))db.events.push(ev);
+        });
+      }
+      db.entries.sort(function(a,b){return a.date<b.date?-1:1});
+      if(d.settings)db.settings=normSettings(d.settings);
+      save();renderInfo();renderSig();
+      $('impMsg').textContent='取り込み完了: 追加 '+add+'日、更新 '+upd+'日、スキップ '+skip+'日';
+    }catch(e){$('impMsg').textContent='取り込めませんでした: '+e.message}
+    input.value='';
+  };
+  r.readAsText(f);
+});
+
+function onTh(){
+  var w=parseInt($('thW').value,10),a=parseInt($('thA').value,10);
+  if(!(w>=1&&a>w&&a<=17)){$('thMsg').textContent='注意は1以上、要注意はそれより大きく17以下にしてください。';return}
+  db.settings={warn:w,alert:a};save();renderSig();
+  $('thMsg').textContent='しきい値を保存しました。';
+}
+$('thW').addEventListener('change',onTh);
+$('thA').addEventListener('change',onTh);
+
+/* 初期表示 */
+$('legend').innerHTML='';
+renderForm();
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
+window.__dlog={get db(){return db},ITEMS:ITEMS,periods:periods,predict:function(){return predict(periods())},analysis:function(){return cycleAnalysis(periods())}};
+})();
+</script>
+</body>
+</html>
